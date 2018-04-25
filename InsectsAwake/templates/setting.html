@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block css %}
+    <link rel="stylesheet" href="static/assets/dash/AdminLTE.min.css" />
+    <script src="static/assets/css/bootstrap-timepicker.css"></script>
+{% endblock %}
+
+{% block titleinfo %}
+
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+        <ul class="breadcrumb">
+            <i class="home-icon blue" > 开发者工具 </i>
+        </ul>
+    </div>
+
+{% endblock %}
+
+{% block webinfo %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="col-xs-6">
+                <div class="box box-warning">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">端口扫描设置</h3>
+                    </div>
+
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>端口配置:</label>
+                                <textarea class="form-control" rows="2" id="scan_port" >{{ config_info['port_list'] }}</textarea>
+                                <hr>
+                            </div>
+
+                            <div class="col-xs-5">
+                                <label>扫描线程:</label>
+                                <input type="text" class="form-control" name="port_thread" value="{{ config_info['port_thread'] }}" id="port_thread" />
+                            </div>
+                            <div class="col-xs-3">
+                                <label>操作:</label>
+                                <select class="form-control" id="">
+                                    <option value="1" >备用</option>
+                                </select>
+                            </div>
+
+                            <div class="col-xs-12">
+                                <hr>
+                                <button class="btn btn-info pull-right btn-sm" id="port_scan_config">提交更新</button>
+                            </div>
+
+                        </div>
+                    </div>
+                <!-- /.box-body -->
+                </div>
+            </div>
+        {#        端口扫描配置界面结束#}
+        {#        子域名扫描配置界面开始#}
+            <div class="col-xs-6">
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">子域名扫描设置</h3>
+                    </div>
+
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>扫描字典配置:</label>
+                                <textarea class="form-control" rows="8" id="subdomain_dict">{{ config_json['subdomain'] }}</textarea>
+                                <hr>
+                            </div>
+
+                            <div class="col-xs-12">
+                                <button class="btn btn-info pull-right btn-sm" id="subdomain_config">提交更新</button>
+                            </div>
+
+                        </div>
+                    </div>
+                <!-- /.box-body -->
+                </div>
+            </div>
+        {#        子域名扫描配置界面结束#}
+        {#        漏洞扫描配置界面开始#}
+            <div class="col-xs-6">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">漏洞扫描设置</h3>
+                    </div>
+
+                    <div class="box-body">
+                        <div class="row">
+
+                            <div class="col-xs-5">
+                                <label>任务检测频率:</label>
+                                <input type="text" class="form-control" name="scanner_time" value="{{ config_info['scanner_time'] }}" id="scanner_time" />
+                            </div>
+                            <div class="col-xs-5">
+                                <label>扫描线程:</label>
+                                <input type="text" class="form-control" name="scanner_thread" value="{{ config_info['scanner_thread'] }}" id="scanner_thread" />
+                            </div>
+
+                            <div class="col-xs-12">
+                                <hr>
+                                <button class="btn btn-info pull-right btn-sm" id="scanner_config">提交更新</button>
+                            </div>
+
+                        </div>
+                    </div>
+                <!-- /.box-body -->
+                </div>
+            </div>
+        {#        漏洞扫描配置界面结束#}
+
+
+		</div><!-- #main-widget-container -->
+    </div>
+
+{% block js %}
+
+    <script>
+
+
+    jQuery(function($) {
+
+        $('#db_management').click(function () {
+            const collections_name = $('#collections_name').val();
+            const db_command = $('#db_command').val();
+            const object_id = $('#object_id').val();
+            const data = {
+                "collections_name": collections_name,
+                "db_command": db_command,
+                "object_id": object_id,
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/dev-tools',
+                dataType: 'json',
+                data: data,
+
+                success: function (data) {
+                    const result_json = eval(data);
+                    const result = result_json.result;
+                    $('#db_result').val(result);
+                },
+                error: function (xhr, type) {
+                }
+            });
+        });
+
+        $('#port_scan_config').click(function () {
+            const scan_port = $('#scan_port').val();
+            const port_thread = $('#port_thread').val();
+            const data = {
+                "source": 'port_scan',
+                "scan_port": scan_port,
+                "port_thread": port_thread,
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/config-change',
+                dataType: 'json',
+                data: data,
+                success: function () {
+                    alert('修改成功!');
+                    location.href = "/setting";
+                },
+                error: function () {
+                    alert('修改失败!');
+                }
+            });
+        });
+
+        {#扫描配置#}
+        $('#scanner_config').click(function () {
+            const scanner_time = $('#scanner_time').val();
+            const scanner_thread = $('#scanner_thread').val();
+            const data = {
+                "source": 'scanner_config',
+                "scanner_thread": scanner_thread,
+                "scanner_time": scanner_time,
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/config-change',
+                dataType: 'json',
+                data: data,
+                success: function () {
+                    alert('修改成功!');
+                    location.href = "/setting";
+                },
+                error: function () {
+                    alert('修改失败!');
+                }
+            });
+        });
+
+        {#子域名设置#}
+        $('#subdomain_config').click(function () {
+            const subdomain_dict = $('#subdomain_dict').val();
+            const data = {
+                "source": 'subdomain_scan',
+                "subdomain_dict": subdomain_dict,
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/config-change',
+                dataType: 'json',
+                data: data,
+                success: function () {
+                    alert('修改成功!');
+                    location.href = "/setting";
+                },
+                error: function () {
+                    alert('修改失败!');
+                }
+            });
+        });
+    });
+
+
+    </script>
+    <script src="static/assets/js/bootstrap-timepicker.js"></script>
+{% endblock %}
+
+{% endblock %}

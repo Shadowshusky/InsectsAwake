@@ -1,0 +1,7 @@
+Flask
+pocsuite
+pymongo
+python-nmap
+apscheduler
+multiprocessing
+dnspython

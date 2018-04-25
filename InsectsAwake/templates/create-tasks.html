@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% block css %}
+    <link rel="stylesheet" href="static/assets/css/bootstrap-duallistbox.css" />
+    <link rel="stylesheet" href="static/assets/css/bootstrap-duallistbox.css" />
+    <link rel="stylesheet" href="static/assets/css/bootstrap-multiselect.css" />
+    <link rel="stylesheet" href="static/assets/css/select2.css" />
+{% endblock %}
+
+{% block titleinfo %}
+
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+        <ul class="breadcrumb">
+            <i class="home-icon blue"> 新建任务 </i>
+        </ul>
+    </div>
+
+{% endblock %}
+
+{% block webinfo %}
+{#    <div class="page-header">#}
+{#        <h1> 新建任务 </h1>#}
+{#    </div><!-- /.page-header -->#}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <form class="form-horizontal" role="form">
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right">任务名称</label>
+
+                    <div class="col-sm-4">
+                      <input type="text" class="form-control" id="taskname" placeholder="请输入任务名称">
+                    </div>
+                </div>
+
+                <div class="space-6"></div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right">扫描周期</label>
+                    <div class="col-sm-4">
+                        <!-- #section:plugins/input.multiselect -->
+                        <select class="form-control" id="form-field-plan">
+                            <option value="0">单次扫描</option>
+                            <option value="1">每日扫描</option>
+                            <option value="7">每周扫描</option>
+                            <option value="30">每月扫描</option>
+                        </select>
+
+                        <!-- /section:plugins/input.multiselect -->
+                    </div>
+                </div>
+
+                <div class="hr hr-16 hr-dotted"></div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right">扫描对象</label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" rows="3" placeholder="每行一个扫描对象" id="target-text"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right">插件选择</label>
+                    <div class="col-sm-6">
+                        <!-- #section:plugins/input.duallist -->
+
+                        <select multiple="multiple" size="5" name="duallistbox_demo1[]" id="form-field-plugin">
+                            {% for i in plugin %}
+                                <option value="{{ i['_id'] }}">{{ i['plugin_name'] }}</option>
+                            {% endfor %}
+                            {# 从插件集合中读取数据，通过插件的ID来判断选择的插件#}
+                        </select>
+
+                        <!-- /section:plugins/input.duallist -->
+                        <div class="hr hr-16 hr-dotted"></div>
+                    </div>
+                </div>
+
+                <div class="form-group center">
+                    <button type="button" class="btn btn-sm btn-default" id="createtask">
+                        提交任务
+                        <i class="ace-icon fa fa-arrow-right icon-on-right bigger-110" ></i>
+                    </button>
+                </div>
+            </form>
+            <!-- PAGE CONTENT ENDS -->
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+
+{% block js %}
+    <script type="text/javascript">
+			jQuery(function($){
+			    var demo1 = $('select[name="duallistbox_demo1[]"]').bootstrapDualListbox({infoTextFiltered: '<span class="label label-purple label-lg">Filtered</span>'});
+				var container1 = demo1.bootstrapDualListbox('getContainer');
+				container1.find('.btn').addClass('btn-white btn-info btn-bold');
+
+				/**var setRatingColors = function() {
+					$(this).find('.star-on-png,.star-half-png').addClass('orange2').removeClass('grey');
+					$(this).find('.star-off-png').removeClass('orange2').addClass('grey');
+				}*/
+				$('.rating').raty({
+					'cancel' : true,
+					'half': true,
+					'starType' : 'i'
+					/**,
+
+					'click': function() {
+						setRatingColors.call(this);
+					},
+					'mouseover': function() {
+						setRatingColors.call(this);
+					},
+					'mouseout': function() {
+						setRatingColors.call(this);
+					}*/
+				})//.find('i:not(.star-raty)').addClass('grey');
+
+
+
+				//////////////////
+				//select2
+				$('.select2').css('width','200px').select2({allowClear:true})
+				$('#select2-multiple-style .btn').on('click', function(e){
+					var target = $(this).find('input[type=radio]');
+					var which = parseInt(target.val());
+					if(which == 2) $('.select2').addClass('tag-input-style');
+					 else $('.select2').removeClass('tag-input-style');
+				});
+
+				//////////////////
+				$('.multiselect').multiselect({
+				 enableFiltering: true,
+				 enableHTML: true,
+				 buttonClass: 'btn btn-white btn-primary',
+				 templates: {
+					button: '<button type="button" class="multiselect dropdown-toggle" data-toggle="dropdown"><span class="multiselect-selected-text"></span> &nbsp;<b class="fa fa-caret-down"></b></button>',
+					ul: '<ul class="multiselect-container dropdown-menu"></ul>',
+					filter: '<li class="multiselect-item filter"><div class="input-group"><span class="input-group-addon"><i class="fa fa-search"></i></span><input class="form-control multiselect-search" type="text"></div></li>',
+					filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default btn-white btn-grey multiselect-clear-filter" type="button"><i class="fa fa-times-circle red2"></i></button></span>',
+					li: '<li><a tabindex="0"><label></label></a></li>',
+			        divider: '<li class="multiselect-item divider"></li>',
+			        liGroup: '<li class="multiselect-item multiselect-group"><label></label></li>'
+				 }
+				});
+
+
+				///////////////////
+
+				//typeahead.js
+				//example taken from plugin's page at: https://twitter.github.io/typeahead.js/examples/
+				var substringMatcher = function(strs) {
+					return function findMatches(q, cb) {
+						var matches, substringRegex;
+
+						// an array that will be populated with substring matches
+						matches = [];
+
+						// regex used to determine if a string contains the substring `q`
+						substrRegex = new RegExp(q, 'i');
+
+						// iterate through the pool of strings and for any string that
+						// contains the substring `q`, add it to the `matches` array
+						$.each(strs, function(i, str) {
+							if (substrRegex.test(str)) {
+								// the typeahead jQuery plugin expects suggestions to a
+								// JavaScript object, refer to typeahead docs for more info
+								matches.push({ value: str });
+							}
+						});
+
+						cb(matches);
+					}
+				 }
+
+				 $('input.typeahead').typeahead({
+					hint: true,
+					highlight: true,
+					minLength: 1
+				 }, {
+					name: 'states',
+					displayKey: 'value',
+					source: substringMatcher(ace.vars['US_STATES']),
+					limit: 10
+				 });
+
+
+				///////////////
+
+
+				//in ajax mode, remove remaining elements before leaving page
+				$(document).one('ajaxloadstart.page', function(e) {
+					$('[class*=select2]').remove();
+					$('select[name="duallistbox_demo1[]"]').bootstrapDualListbox('destroy');
+					$('.rating').raty('destroy');
+					$('.multiselect').multiselect('destroy');
+				});
+
+			});
+		</script>
+    <script src="static/assets/js/add-task.js"></script>
+    <script src="static/assets/js/jquery.bootstrap-duallistbox.js"></script>
+    <script src="static/assets/js/jquery.bootstrap-duallistbox.js"></script>
+    <script src="static/assets/js/jquery.raty.js"></script>
+    <script src="static/assets/js/bootstrap-multiselect.js"></script>
+    <script src="static/assets/js/select2.js"></script>
+    <script src="static/assets/js/typeahead.jquery.js"></script>
+{% endblock %}
+
+{% endblock %}

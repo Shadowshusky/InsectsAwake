@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta charset="utf-8" />
+		<title>惊蛰</title>
+
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+        <link rel="shortcut icon" href="static/image/favicon.ico">
+		<!-- bootstrap & fontawesome -->
+		<link rel="stylesheet" href="static/assets/css/bootstrap.css" />
+		<link rel="stylesheet" href="static/assets/css/font-awesome.css" />
+
+		<!-- page specific plugin styles -->
+
+		<!-- text fonts -->
+		<link rel="stylesheet" href="static/assets/css/ace-fonts.css" />
+
+		<!-- ace styles -->
+		<link rel="stylesheet" href="static/assets/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+		<!--[if lte IE 9]>
+		<link rel="stylesheet" href="static/assets/css/ace-part2.css" class="ace-main-stylesheet" />
+		<![endif]-->
+
+		<!--[if lte IE 9]>
+		 <link rel="stylesheet" href="static/assets/css/ace-ie.css" />
+		<![endif]-->
+
+		<!-- inline styles related to this page -->
+
+		<!-- ace settings handler -->
+		<script src="static/assets/js/ace-extra.js"></script>
+
+		<!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+		<!--[if lte IE 8]>
+		<script src="static/assets/js/html5shiv.js"></script>
+		<script src="static/assets/js/respond.js"></script>
+		<![endif]-->
+{% block css %}
+
+{% endblock %}
+	</head>
+
+	<body class="no-skin">
+		<!-- #section:basics/navbar.layout -->
+		<div id="navbar" class="navbar navbar-default ace-save-state">
+			<div class="navbar-container ace-save-state" id="navbar-container">
+				<!-- #section:basics/sidebar.mobile.toggle -->
+				<button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+					<span class="sr-only">Toggle sidebar</span>
+
+					<span class="icon-bar"></span>
+
+					<span class="icon-bar"></span>
+
+					<span class="icon-bar"></span>
+				</button>
+
+				<!-- /section:basics/sidebar.mobile.toggle -->
+				<div class="navbar-header pull-left">
+					<!-- #section:basics/navbar.layout.brand -->
+					<a href="index" class="navbar-brand">
+						<small>
+							<i class="fa fa-terminal"></i>
+							惊蛰
+						</small>
+					</a>
+
+					<!-- /section:basics/navbar.layout.brand -->
+
+					<!-- #section:basics/navbar.toggle -->
+
+					<!-- /section:basics/navbar.toggle -->
+				</div>
+
+				<!-- #section:basics/navbar.dropdown -->
+				<div class="navbar-buttons navbar-header pull-right" role="navigation">
+					<ul class="nav ace-nav">
+
+
+						<!-- #section:basics/navbar.user_menu -->
+						<li class="light-blue">
+							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+								<img class="nav-user-photo" src="static/assets/avatars/avatar2.png" alt="Photo" />
+								<span class="user-info">
+									<small>Welcome,</small>
+									Administrator
+								</span>
+
+								<i class="ace-icon fa fa-caret-down"></i>
+							</a>
+
+							<ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+								<li>
+									<a href="setting">
+										<i class="ace-icon fa fa-cog"></i>
+										Setting
+									</a>
+								</li>
+
+                                <li>
+									<a href="https://www.seebug.org/vuldb/vulnerabilities" target="view_window">
+										<i class="ace-icon fa fa-cloud-download "></i>
+										Plugin
+									</a>
+								</li>
+
+								<li>
+                                    <a data-toggle="modal" data-target="#aboutModal">
+                                        <i class="ace-icon fa fa-book "></i>
+                                        About
+                                    </a>
+								</li>
+
+								<li class="divider"></li>
+
+								<li>
+									<a href="login-out">
+										<i class="ace-icon fa fa-power-off"></i>
+										Logout
+									</a>
+								</li>
+							</ul>
+						</li>
+
+						<!-- /section:basics/navbar.user_menu -->
+					</ul>
+				</div>
+
+				<!-- /section:basics/navbar.dropdown -->
+			</div><!-- /.navbar-container -->
+		</div>
+
+		<!-- /section:basics/navbar.layout -->
+		<div class="main-container ace-save-state" id="main-container">
+			<script type="text/javascript">
+				try{ace.settings.loadState('main-container')}catch(e){}
+			</script>
+
+			<!-- #section:basics/sidebar -->
+			<div id="sidebar" class="sidebar responsive ace-save-state">
+				<script type="text/javascript">
+					try{ace.settings.loadState('sidebar')}catch(e){}
+				</script>
+
+				<div class="sidebar-shortcuts" id="sidebar-shortcuts">
+                {# 顶部四个方块开始#}
+					<div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+
+                        <a class="btn btn-success" href="dashboard" title="仪表盘">
+                            <i class="ace-icon fa fa-area-chart"></i>
+                        </a>
+
+                        <a class="btn btn-primary" href="create-tasks" title="新建扫描任务">
+                            <i class="ace-icon fa fa-pencil"></i>
+                        </a>
+
+                        <a class="btn btn-warning" href="subdomain-brute" title="子域名扫描">
+                            <i class="ace-icon fa fa-crosshairs"></i>
+                        </a>
+
+                        <a class="btn btn-danger" href="setting" title="系统设置">
+                            <i class="ace-icon fa fa-gear"></i>
+                        </a>
+						<!-- /section:basics/sidebar.layout.shortcuts -->
+					</div>
+{#                    顶部四个结束#}
+				</div><!-- /.sidebar-shortcuts -->
+
+				<ul class="nav nav-list">
+                    <li class="">
+						<a href="dashboard">
+							<i class="menu-icon fa fa-tachometer"></i>
+							<span class="menu-text"> 监控面板 </span>
+						</a>
+
+						<b class="arrow"></b>
+					</li>
+
+					<li class="">
+						<a href="task-management">
+							<i class="menu-icon fa fa-credit-card"></i>
+							<span class="menu-text"> 任务列表 </span>
+						</a>
+
+						<b class="arrow"></b>
+					</li>
+
+                    <li class="">
+						<a href="vulnerability-management">
+							<i class="menu-icon fa fa-bug"></i>
+							<span class="menu-text"> 漏洞列表 </span>
+						</a>
+
+						<b class="arrow"></b>
+					</li>
+
+					<li class="">
+						<a href="plugin-management">
+							<i class="menu-icon fa 	fa-pencil-square-o"></i>
+							<span class="menu-text"> 插件管理 </span>
+						</a>
+
+						<b class="arrow"></b>
+					</li>
+
+                    <li class="">
+						<a href="#" class="dropdown-toggle">
+							<i class="menu-icon fa fa-clipboard"></i>
+							<span class="menu-text">
+								资产管理
+							</span>
+
+							<b class="arrow fa fa-angle-down"></b>
+						</a>
+
+						<b class="arrow"></b>
+
+						<ul class="submenu">
+
+							<li class="">
+								<a href="asset-management">
+									<i class="menu-icon fa fa-caret-right"></i>
+									资产库管理
+								</a>
+
+								<b class="arrow"></b>
+							</li>
+
+							<li class="">
+								<a href="asset-search">
+									<i class="menu-icon fa fa-caret-right"></i>
+									资产查询
+								</a>
+
+								<b class="arrow"></b>
+							</li>
+						</ul>
+					</li>
+
+                    <li class="">
+						<a href="subdomain-brute">
+							<i class="menu-icon fa fa-eye"></i>
+							<span class="menu-text"> 域名发现 </span>
+						</a>
+
+						<b class="arrow"></b>
+					</li>
+
+                    <li class="">
+						<a href="week-passwd-test">
+							<i class="menu-icon fa fa-random"></i>
+							<span class="menu-text"> 撞库测试 </span>
+						</a>
+
+						<b class="arrow"></b>
+					</li>
+
+                    <li class="">
+						<a href="#" class="dropdown-toggle">
+							<i class="menu-icon fa fa-cogs"></i>
+							<span class="menu-text">
+								系统管理
+							</span>
+
+							<b class="arrow fa fa-angle-down"></b>
+						</a>
+
+						<b class="arrow"></b>
+
+						<ul class="submenu">
+
+							<li class="">
+								<a href="setting">
+									<i class="menu-icon fa fa-caret-right"></i>
+									系统设置
+								</a>
+
+								<b class="arrow"></b>
+							</li>
+
+							<li class="">
+								<a href="dev-tools">
+									<i class="menu-icon fa fa-caret-right"></i>
+									开发者工具
+								</a>
+
+								<b class="arrow"></b>
+							</li>
+						</ul>
+					</li>
+				</ul><!-- /.nav-list -->
+
+				<!-- #section:basics/sidebar.layout.minimize -->
+				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+					<i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+				</div>
+
+				<!-- /section:basics/sidebar.layout.minimize -->
+			</div>
+
+			<!-- /section:basics/sidebar -->
+			<div class="main-content">
+				<div class="main-content-inner">
+                    {% block titleinfo %}
+
+                    {% endblock %}
+					<!-- /section:basics/content.breadcrumbs -->
+					<div class="page-content">
+						<!-- /section:settings.box -->
+						<div class="row">
+							<div class="col-xs-12">
+								<!-- PAGE CONTENT BEGINS -->
+                                {% block webinfo %}
+                                {% endblock %}
+								<!-- PAGE CONTENT ENDS -->
+							</div><!-- /.col -->
+						</div><!-- /.row -->
+					</div><!-- /.page-content -->
+				</div>
+			</div><!-- /.main-content -->
+
+            <!-- About模态框（Modal） -->
+            <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel"> 关于 </h4>
+                        </div>
+                        <div class="modal-body">
+                            <h5>
+                            本项目是基于Flask Web 框架开发的一款在线漏洞扫描平台，后端调用 Pocsuite 对目标进行漏洞检测
+                            </h5>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"> 退出 </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+		</div><!-- /.main-container -->
+
+		<!-- basic scripts -->
+
+		<!--[if !IE]> -->
+		<script src="static/assets/js/jquery.js"></script>
+		<script src="static/assets/js/bootstrap.js"></script>
+
+		<!-- ace scripts -->
+		<script src="static/assets/js/ace/elements.scroller.js"></script>
+		<script src="static/assets/js/ace/elements.colorpicker.js"></script>
+		<script src="static/assets/js/ace/elements.fileinput.js"></script>
+		<script src="static/assets/js/ace/elements.typeahead.js"></script>
+		<script src="static/assets/js/ace/elements.wysiwyg.js"></script>
+		<script src="static/assets/js/ace/elements.spinner.js"></script>
+		<script src="static/assets/js/ace/elements.treeview.js"></script>
+		<script src="static/assets/js/ace/elements.wizard.js"></script>
+		<script src="static/assets/js/ace/elements.aside.js"></script>
+		<script src="static/assets/js/ace/ace.js"></script>
+		<script src="static/assets/js/ace/ace.ajax-content.js"></script>
+		<script src="static/assets/js/ace/ace.touch-drag.js"></script>
+		<script src="static/assets/js/ace/ace.sidebar.js"></script>
+		<script src="static/assets/js/ace/ace.sidebar-scroll-1.js"></script>
+		<script src="static/assets/js/ace/ace.submenu-hover.js"></script>
+		<script src="static/assets/js/ace/ace.widget-box.js"></script>
+		<script src="static/assets/js/ace/ace.settings.js"></script>
+		<script src="static/assets/js/ace/ace.settings-rtl.js"></script>
+		<script src="static/assets/js/ace/ace.settings-skin.js"></script>
+		<script src="static/assets/js/ace/ace.widget-on-reload.js"></script>
+		<script src="static/assets/js/ace/ace.searchbox-autocomplete.js"></script>
+
+		<!-- inline scripts related to this page -->
+
+		<!-- the following scripts are used in demo only for onpage help and you don't need them -->
+		<link rel="stylesheet" href="static/assets/css/ace.onpage-help.css" />
+		<link rel="stylesheet" href="static/docs/assets/js/themes/sunburst.css" />
+		<script src="static/assets/js/ace/elements.onpage-help.js"></script>
+		<script src="static/assets/js/ace/ace.onpage-help.js"></script>
+		<script src="static/docs/assets/js/rainbow.js"></script>
+		<script src="static/docs/assets/js/language/generic.js"></script>
+		<script src="static/docs/assets/js/language/html.js"></script>
+		<script src="static/docs/assets/js/language/css.js"></script>
+		<script src="static/docs/assets/js/language/javascript.js"></script>
+    {% block js %}
+    {% endblock %}
+	</body>
+</html>

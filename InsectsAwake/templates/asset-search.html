@@ -1,0 +1,377 @@
+{% extends 'base.html' %}
+
+{% block css %}
+    <link rel="stylesheet" href="static/assets/css/bootstrap-duallistbox.css" />
+    <link rel="stylesheet" href="static/assets/css/bootstrap-multiselect.css" />
+    <link rel="stylesheet" href="static/assets/css/select2.css" />
+{% endblock %}
+
+{% block titleinfo %}
+
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+        <ul class="breadcrumb">
+            <i class="home-icon blue"> 资产搜索 </i>
+        </ul>
+    </div>
+
+{% endblock %}
+
+{% block webinfo %}
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="table-header">
+                    <a class="btn btn-primary" href="#" role="button" data-toggle="modal" data-target="#newScan">
+                        <i class="ace-icon fa fa-plus-circle bigger-110"></i>
+                        新建扫描
+                    </a>
+
+                    <a class="btn btn-primary" href="#" role="button" id="delete_choice">
+                        <i class="ace-icon fa fa-trash-o bigger-110"></i>
+                        删除选中
+                    </a>
+                </div>
+
+                <!-- div.dataTables_borderWrap -->
+                <div>
+                    <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr class="center">
+                                <th class="center">主机</th>
+                                <th class="center">端口</th>
+                                <th class="center">服务</th>
+                                <th class="center">资产库</th>
+                                <th class="center">扫描时间</th>
+                                <th class="center">操作</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for i in asset_server %}
+                                <tr class="center">
+                                    <td>
+                                        <input type="checkbox" name="check_id" value="{{ i['_id'] }}"/>
+                                    </td>
+                                    <td>{{ i['host'] }}</td>
+                                    <td>{{ i['port'] }}</td>
+                                    <td>{{ i['port_server'] }}</td>
+                                    <td>{{ i['asset_name'] }}</td>
+                                    <td>{{ i['scan_date'] }}</td>
+                                    <td>
+                                        <div class="hidden-sm hidden-xs action-buttons">
+                                            <a class="green asset_edit_id" role="button" data-toggle="modal" href="#" rel="" title="编辑" data-target="">
+                                                <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                            </a>
+                                            &nbsp;
+                                            <a class="red" href="?delete=" title="删除">
+                                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            {#            新建扫描模态框#}
+                        <div class="modal fade" id="newScan" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"
+                                                aria-hidden="true">×
+                                        </button>
+                                        <h4 class="modal-title" id="myModalLabel">
+                                            新增扫描任务
+                                        </h4>
+                                    </div>
+
+                                    <div class="modal-body" >
+                                        <form class="form-horizontal" role="form">
+
+                                            <div class="form-group">
+                                                <label class="control-label no-padding-right">任务名称</label>
+
+                                                <div>
+                                                  <input type="text" class="form-control" id="taskname" placeholder="请输入任务名称">
+                                                </div>
+                                            </div>
+
+                                            <div class="space-6"></div>
+
+                                            <div class="form-group">
+                                                <label class="control-label no-padding-right">扫描周期</label>
+                                                <div>
+                                                    <!-- #section:plugins/input.multiselect -->
+                                                    <select class="form-control" id="form-field-plan">
+                                                        <option value="0">单次扫描</option>
+                                                        <option value="1">每日扫描</option>
+                                                        <option value="7">每周扫描</option>
+                                                        <option value="30">每月扫描</option>
+                                                    </select>
+
+                                                    <!-- /section:plugins/input.multiselect -->
+                                                </div>
+                                            </div>
+
+                                            <div class="hr hr-16 hr-dotted"></div>
+
+{#                                            <div class="form-group">#}
+{#                                                <label class="control-label no-padding-right">扫描对象</label>#}
+{#                                                <div>#}
+{#                                                    <input type="text" class="form-control" id="asset_server_id" disabled="disabled">#}
+{#                                                </div>#}
+{#                                            </div>#}
+
+                                            <div class="form-group">
+                                                <label class="control-label no-padding-right">插件选择</label>
+                                                <div>
+                                                    <!-- #section:plugins/input.duallist -->
+
+                                                    <select multiple="multiple" size="5" name="duallistbox_demo1[]" id="form-field-plugin">
+                                                        {% for a in plugin_data %}
+                                                            <option value="{{ a['_id'] }}">{{ a['plugin_name'] }}</option>
+                                                        {% endfor %}
+                                                        {# 从插件集合中读取数据，通过插件的ID来判断选择的插件#}
+                                                    </select>
+
+                                                    <!-- /section:plugins/input.duallist -->
+                                                    <div class="hr hr-16 hr-dotted"></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group center">
+                                                <button type="button" class="btn btn-sm btn-default" id="createtask">
+                                                    提交任务
+                                                    <i class="ace-icon fa fa-arrow-right icon-on-right bigger-110" ></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div>
+                        {#            新建扫描态框结束#}
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+
+{% block js %}
+
+    <!-- page specific plugin scripts -->
+    <script src="static/assets/js/dataTables/jquery.dataTables.js"></script>
+    <script src="static/assets/js/dataTables/jquery.dataTables.bootstrap.js"></script>
+    <script src="static/assets/js/checkbox.js"></script>
+    <!-- inline scripts related to this page -->
+    <script type="text/javascript">
+        jQuery(function($) {
+            //initiate dataTables plugin
+            $('#dynamic-table')
+            //.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
+            .DataTable( {
+                bAutoWidth: false,
+                "aoColumns": [
+                  { "bSortable": false },
+                  null, null,null, null, null,
+                  { "bSortable": false }
+                ],
+                "aaSorting": [],
+            } );
+
+            {#获取复选框值#}
+            $('#check_test').click(function () {
+                const scan_option = $("input[type='checkbox']").is(':checked');
+                if (scan_option) {
+                    $("input[name='check_id']:checked").each(function () {
+                    alert(this.value);
+                });
+                }
+            });
+
+            {#新建扫描#}
+            $('#createtask').click(function () {
+                const scan_option = $("input[type='checkbox']").is(':checked');
+                var server_id = '';
+                if (scan_option) {
+                    $("input[name='check_id']:checked").each(function () {
+                        var values = $(this).val();
+                        server_id += (values + ",");
+                    });
+                } else {
+                        alert("请选中扫描对象!");
+                        location.href = "asset-search";
+                    }
+                var taskname = $('#taskname').val();
+                if (!taskname) {
+                    alert("任务名不可为空！");
+                }
+                var plan = $('#form-field-plan').val();
+                var target_text = server_id;
+                var plugin_text = $('#form-field-plugin').val().join(",");
+                $.post('/add-task', {
+                    source: "server",
+                    taskname: taskname,
+                    plan: plan,
+                    target_text: target_text,
+                    plugin_text: plugin_text,
+                }, function (e) {
+                    if (e === 'success') {
+                        alert("建立成功");
+                        location.href = "/task-management";
+                    } else {
+                        alert("创建失败, 请检查数据是否完整或是否选择扫描对象!")
+                    }
+                })
+            });
+
+            {#扫描插件选择框#}
+            $(".asset_id_task").click(function() {
+                const asset_id = $(this).attr('rel');
+                $('#asset_id').val(asset_id);
+              });
+
+            {#删除选中#}
+            $("#delete_choice").click(function() {
+                const scan_option = $("input[type='checkbox']").is(':checked');
+                var server_id = '';
+                if (scan_option) {
+                    $("input[name='check_id']:checked").each(function () {
+                        var values = $(this).val();
+                        server_id += (values + ",");
+                    });
+                }
+                var data = {
+                    "source": 'delete_choice',
+                    "server_id": server_id,
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: '/asset-delete',
+                    data: data,
+                    dataType: 'json',
+                    success: function(data) {
+                        alert("删除成功");
+                        location.href = "/asset-search";
+                    },
+                    error: function(xhr, type) {
+                    }
+                });
+              });
+
+            const demo1 = $('select[name="duallistbox_demo1[]"]').bootstrapDualListbox({infoTextFiltered: '<span class="label label-purple label-lg">Filtered</span>'});
+            const container1 = demo1.bootstrapDualListbox('getContainer');
+            container1.find('.btn').addClass('btn-white btn-info btn-bold');
+
+            /**var setRatingColors = function() {
+                $(this).find('.star-on-png,.star-half-png').addClass('orange2').removeClass('grey');
+                $(this).find('.star-off-png').removeClass('orange2').addClass('grey');
+            }*/
+            $('.rating').raty({
+                'cancel' : true,
+                'half': true,
+                'starType' : 'i'
+                /**,
+
+                'click': function() {
+                    setRatingColors.call(this);
+                },
+                'mouseover': function() {
+                    setRatingColors.call(this);
+                },
+                'mouseout': function() {
+                    setRatingColors.call(this);
+                }*/
+            });//.find('i:not(.star-raty)').addClass('grey');
+
+
+
+            //////////////////
+            //select2
+            $('.select2').css('width','200px').select2({allowClear:true})
+            $('#select2-multiple-style .btn').on('click', function(e){
+                const target = $(this).find('input[type=radio]');
+                const which = parseInt(target.val());
+                if(which === 2) $('.select2').addClass('tag-input-style');
+                 else $('.select2').removeClass('tag-input-style');
+            });
+
+            //////////////////
+            $('.multiselect').multiselect({
+             enableFiltering: true,
+             enableHTML: true,
+             buttonClass: 'btn btn-white btn-primary',
+             templates: {
+                button: '<button type="button" class="multiselect dropdown-toggle" data-toggle="dropdown"><span class="multiselect-selected-text"></span> &nbsp;<b class="fa fa-caret-down"></b></button>',
+                ul: '<ul class="multiselect-container dropdown-menu"></ul>',
+                filter: '<li class="multiselect-item filter"><div class="input-group"><span class="input-group-addon"><i class="fa fa-search"></i></span><input class="form-control multiselect-search" type="text"></div></li>',
+                filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default btn-white btn-grey multiselect-clear-filter" type="button"><i class="fa fa-times-circle red2"></i></button></span>',
+                li: '<li><a tabindex="0"><label></label></a></li>',
+                divider: '<li class="multiselect-item divider"></li>',
+                liGroup: '<li class="multiselect-item multiselect-group"><label></label></li>'
+             }
+            });
+
+
+            ///////////////////
+
+            //typeahead.js
+            //example taken from plugin's page at: https://twitter.github.io/typeahead.js/examples/
+            const substringMatcher = function(strs) {
+                return function findMatches(q, cb) {
+                    var matches, substringRegex;
+
+                    // an array that will be populated with substring matches
+                    matches = [];
+
+                    // regex used to determine if a string contains the substring `q`
+                    substrRegex = new RegExp(q, 'i');
+
+                    // iterate through the pool of strings and for any string that
+                    // contains the substring `q`, add it to the `matches` array
+                    $.each(strs, function(i, str) {
+                        if (substrRegex.test(str)) {
+                            // the typeahead jQuery plugin expects suggestions to a
+                            // JavaScript object, refer to typeahead docs for more info
+                            matches.push({ value: str });
+                        }
+                    });
+
+                    cb(matches);
+                }
+             }
+
+             $('input.typeahead').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+             }, {
+                name: 'states',
+                displayKey: 'value',
+                source: substringMatcher(ace.vars['US_STATES']),
+                limit: 10
+             });
+
+
+            ///////////////
+
+
+            //in ajax mode, remove remaining elements before leaving page
+            $(document).one('ajaxloadstart.page', function(e) {
+                $('[class*=select2]').remove();
+                $('select[name="duallistbox_demo1[]"]').bootstrapDualListbox('destroy');
+                $('.rating').raty('destroy');
+                $('.multiselect').multiselect('destroy');
+            });
+
+        })
+    </script>
+    <script src="static/assets/js/jquery.bootstrap-duallistbox.js"></script>
+    <script src="static/assets/js/jquery.raty.js"></script>
+    <script src="static/assets/js/bootstrap-multiselect.js"></script>
+    <script src="static/assets/js/select2.js"></script>
+    <script src="static/assets/js/typeahead.jquery.js"></script>
+
+{% endblock %}
+
+{% endblock %}

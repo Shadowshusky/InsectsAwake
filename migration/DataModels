@@ -1,0 +1,107 @@
+# PLUGIN_DB 插件集合
+------------------------------------
+plugin_appversion       影响版本
+plugin_vultype          漏洞名称
+plugin_vuldate          漏洞日期
+plugin_filename         文件路径
+plugin_name             插件名
+plugin_appname          应用名称
+plugin_author           插件作者
+_id                     ObjectId
+------------------------------------
+
+# TASKS_DB 任务集合
+------------------------------------
+task_status             任务状态
+end_date                结束时间
+scan_target_list        扫描对象(列表)
+task_name               任务名称
+plugin_id               插件id
+_id                     ObjectId
+start_date              任务开始时间
+task_plan               扫描计划
+------------------------------------
+
+# VULNERABILITY_DB 漏洞集合
+------------------------------------
+scan_result             扫描结果
+target                  扫描对象
+task_id                 任务ID
+appname                 应用名称
+scan_date               扫描日期
+poc_name                插件名称
+vulversion              漏洞影响版本
+poc_vultype             漏洞类型
+task_name               任务名称
+plugin_id               插件ID
+_id                     ObjectId
+------------------------------------
+
+# ASSET_DB 资产库集合
+asset_date              创建日期
+scan_option             资产发现
+asset_text              资产
+asset_name              资产库名称
+dept_name               部门名称
+admin_name              管理员
+_id                     ObjectId
+------------------------------------
+
+# CONFIG_DB 配置集合
+------------------------------------
+port_thread             端口扫描线程
+scanner_thread          漏洞检测线程
+port_list               端口扫描列表
+config_name             配置文件名称
+subdomain               子域名字典
+------------------------------------
+
+
+# SERVER_DB 服务集合
+------------------------------------
+host                    主机
+asset_id                资产库ID
+port                    端口
+port_server             服务
+banner                  指纹(cpe)
+scan_date               扫描日期
+asset_name              所属资产库
+------------------------------------
+
+
+# DOMAIN_DB 服务集合
+------------------------------------
+domain_text             主域名
+scan_option             三级域名扫描
+dept_name               域名所属部门
+domain_date             创建日期
+domain_name             域名名称
+_id                     ObjectId
+------------------------------------
+
+
+# SUBDOMAIN_DB 服务集合
+------------------------------------
+date                    扫描日期
+domain                  主域名
+_id                     ObjectId
+result                  子域名
+domain_id               主域名ID
+domain_name             域名名称
+------------------------------------
+
+# WEEKPASSWD_DB 服务集合
+------------------------------------
+date                    扫描日期
+target                  检测对象
+task_name               任务名称
+post_data               登录数据包
+status                  检测状态
+week_passwd_count       弱口令数量
+error_data              失败标记
+success_data            成功标记
+username                账号
+password                密码
+week_passwd_result      存在弱口令的结果
+_id                     ObjectId
+------------------------------------
