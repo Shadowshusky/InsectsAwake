@@ -1,0 +1,233 @@
+# 惊蛰
+
+本项目是一款基于 Flask 应用框架的漏洞扫描系统，同时集成了渗透测试常用的端口扫描、子域名爆破等功能，后端漏洞扫描采用的是知道创宇安全团队的开源漏洞测试框架 Pocsuite
+
+项目地址：https://github.com/jeffzh3ng/InsectsAwake
+
+本项目仅用于测试、学习使用，不得用于其他非法目的
+
+## 主要功能
+
+- 漏洞扫描
+
+漏洞扫描调用的 Pocsuite 进行扫描，扫描插件通过 [Seebug](https://www.seebug.org/) 可以获取，或者自己编写。
+
+![](images/Screenshot-create-tasks.png)
+
+扫描目标只能是单个 IP 或者 URL，不支持网段扫描（公司是中小型公司，没有这块需求），默认有80余个插件，大多是 Seebug 的免费PoC，因为这个项目我自己是在用的，每次出新的漏洞，我都会编写对应的插件，没有编写插件能力的可以给我联系方式
+
+任务周期可以选择临时、每日、每周或每月
+
+- 资产管理
+
+添加各系统或部门网络资产
+
+![](images/Screenshot-asset-management.png)
+
+可以通过各资产库创建漏洞扫描任务，同样资产库只能是单个 IP 或者 URL。
+
+开启端口发现功能后，后端会定时调用 nmap 对资产进行端口扫描，需要扫描的端口可以在设置里进行配置
+
+- 域名发现功能
+
+即子域名爆破功能，但目前功能尚不完善，只能通过配置字典进行暴力猜解，域名字典可以在设置处进行配置，项目 tests 文件夹内提供了一份子域名字典（字典来源 ring04h 的 [wydomain](https://github.com/ring04h/wydomain/blob/wydomain2/wydomain.csv) 项目）
+![](images/Screenshot-subdomain-brute.png)
+
+## 系统安装
+
+安装演示所使用的操作系统为 Ubuntu 16.04
+
+### 获取项目源码
+
+```bash
+git clone git@github.com:jeffzh3ng/InsectsAwake.git
+```
+
+##### 安装 Python 及 pip
+
+```bash
+sudo apt update
+sudo apt install python python-pip
+```
+
+### 安装 MongoDB
+
+```bash
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+echo "deb [ arch=amd64,arm64,ppc64el,s390x ] http://repo.mongodb.com/apt/ubuntu xenial/mongodb-enterprise/3.6 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-enterprise.listecho "deb http://repo.mongodb.com/apt/ubuntu "$(lsb_release -sc)"/mongodb-enterprise/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-enterprise-3.4.list
+echo "deb http://repo.mongodb.com/apt/ubuntu "$(lsb_release -sc)"/mongodb-enterprise/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-enterprise-3.4.list
+sudo apt-get update
+sudo apt-get install -y mongodb-enterprise
+```
+
+其他系统安装参考官方手册：
+
+[https://docs.mongodb.com/manual/installation/](https://docs.mongodb.com/manual/installation/)
+
+### 安装 Python 依赖包
+
+```bash
+cd InsectsAwake
+sudo pip install pip -U
+sudo pip install -r requirements.txt
+```
+
+### 安装 Nmap
+
+```bash
+sudo apt install nmap
+```
+
+或者[源码安装](https://github.com/nmap/nmap)
+
+### 配置数据库
+
+启动数据库
+
+```bash
+sudo service mongod start
+mongo --host 127.0.0.1:27017
+```
+
+添加用户
+
+```
+use InsectsAwake
+db.createUser({user:'you username',pwd:'you password',roles:[{role:'dbOwner',db:'InsectsAwake'}]})
+exit
+```
+
+### 修改扫描器配置
+
+扫描器配置文件路径：
+InsectsAwake-Project/instance/config.py
+
+```
+class Config():
+    WEB_USER = 'admin'          // 扫描器登录用户
+    WEB_PASSWORD = 'whoami'     // 扫描器登录密码
+    WEB_HOST = '127.0.0.1'      // 本地访问
+    WEB_PORT = 5000             // Web服务端口
+    POCSUITE_PATH = basedir + '/../InsectsAwake/views/modules/scanner/pocsuite_plugin/'
+    
+class ProductionConfig(Config):
+    DB_HOST = '127.0.0.1'       // 数据库地址
+    DB_PORT = 27017             // 数据库端口
+    DB_USERNAME = 'testuser'    // 数据库用户
+    DB_PASSWORD = 'testpwd'     // 数据库密码
+    DB_NAME = 'test'            // 数据库名
+    
+    // 数据库集合名
+    PLUGIN_DB = 'test_plugin_info'
+    TASKS_DB = 'test_tasks'
+    VULNERABILITY_DB = 'test_vuldb'
+    ASSET_DB = 'test_asset'
+    CONFIG_DB = 'test_config'
+    SERVER_DB = 'test_server'
+    SUBDOMAIN_DB = 'test_subdomain'
+    DOMAIN_DB = 'test_domain'
+    WEEKPASSWD_DB = 'test_weekpasswd'
+```
+
+### 初始化数据库
+
+```bash
+cd /InsectsAwake/migration
+python start.py
+```
+
+### 运行系统
+
+完成依赖安装、数据库配置及修改扫描器配置后
+
+```bash
+sudo ./run.sh restart
+```
+
+项目默认运行在127.0.0.1:5000 （可以 修改 默认的 WEB_HOST 及 WEB_PORT），无法外网访问，建议配置 Nginx 或者 Caddy 等Web服务代理访问，这里简单介绍下 Caddy 使用
+
+### Caddy 配置
+
+Caddy 是一个能自动创建 HTTPS 功能的 HTTP/2 网站服务器
+
+#### 安装
+
+Linux 64-bit 一键安装脚本：
+
+```bash
+curl https://getcaddy.com | bash -s personal
+```
+
+其他版本操作系统安装参考[Caddy 官网](https://caddyserver.com/download)
+
+安装 Golang 的通过 go get 获取
+
+```bash
+go get github.com/mholt/caddy/caddy
+```
+
+#### 配置
+
+创建配置文件
+```bash
+sudo mkdir /etc/caddy
+sudo touch /etc/caddy/caddy.config
+sudo chown -R root:www-data /etc/caddy
+sudo vi /etc/caddy/caddy.config
+```
+
+配置文件示例：
+```config
+www.example.com {
+    log /var/log/caddy_insectsawake.log
+    proxy / 127.0.0.1:5000 {
+        transparent 
+    }
+}
+```
+
+修改 <www.example.com> 为你的域名，127.0.0.1:5000 为你配置的服务端口
+
+创建 SSL 证书路径
+```bash
+sudo mkdir /etc/ssl/caddy
+sudo chown -R www-data:root /etc/ssl/caddy
+sudo chmod 0770 /etc/ssl/caddy
+```
+
+### 运行
+
+测试
+
+```bash
+sudo caddy -conf /etc/caddy/caddy.config
+```
+
+后台运行
+
+```bash
+sudo nohup caddy -conf /etc/caddy/caddy.config > /var/log/caddy_log.log &
+```
+
+运行成功
+![](images/Screenshot-dashboard.png)
+
+## 写在后面
+
+项目是三月初开始写的（惊蛰那天），断断续续写了一个多月了，最早的想法是将一些常用的工具如DNSLog、端口扫描、目录爆破、爬虫等渗透常用功能集成在线的形式，但最近公司开始忙起来，没有太多精力继续放在该项目上了，目前只实现了漏洞扫描、端口扫描及子域名爆破，后面有时间会继续完善
+
+使用过程中遇到问题或者建议可以联系我：
+
+- Telegram:[jeffzhang](https://t.me/jeffzhang)
+- Telegram Group:[Insects Awake](https://t.me/joinchat/IoDZvA3_v2g0EYxURQsu5Q)
+- E-Mail:jeffzh3ng@gmail.com
+
+## 参考及依赖项目
+
+- [Pocsuite](https://github.com/knownsec/Pocsuite)
+- [wydomain](https://github.com/ring04h/wydomain)
+- [xunfeng](https://github.com/ysrc/xunfeng)
+- [Flask](https://github.com/pallets/flask)
+- [Nmap](https://github.com/nmap/nmap)
+
+还有参考了一些其他项目但不记得地址了，感谢各位开源

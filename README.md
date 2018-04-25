@@ -9,7 +9,7 @@
 
 ## 截图
 
-![screenshot-dashboard](doc/images/screenshot-dashboard.png)
+![screenshot-dashboard](doc/images/Screenshot-dashboard.png)
 
 ## 安装
 
@@ -17,7 +17,30 @@
 
 ## 使用
 
-目前已经实现漏洞扫描、域名爆破及企业内网资产端口扫描功能
+- 漏洞扫描
+
+漏洞扫描调用的 Pocsuite 进行扫描，扫描插件通过 [Seebug](https://www.seebug.org/) 可以获取，或者自己编写。
+
+![](doc/images/Screenshot-create-tasks.png)
+
+扫描目标只能是单个 IP 或者 URL，不支持网段扫描（公司是中小型公司，没有这块需求），默认有80余个插件，大多是 Seebug 的免费PoC，因为这个项目我自己是在用的，每次出新的漏洞，我都会编写对应的插件，没有编写插件能力的可以给我联系方式
+
+任务周期可以选择临时、每日、每周或每月
+
+- 资产管理
+
+添加各系统或部门网络资产
+
+![](doc/images/Screenshot-asset-management.png)
+
+可以通过各资产库创建漏洞扫描任务，同样资产库只能是单个 IP 或者 URL。
+
+开启端口发现功能后，后端会定时调用 nmap 对资产进行端口扫描，需要扫描的端口可以在设置里进行配置
+
+- 域名发现功能
+
+即子域名爆破功能，但目前功能尚不完善，只能通过配置字典进行暴力猜解，域名字典可以在设置处进行配置，项目 tests 文件夹内提供了一份子域名字典（字典来源 ring04h 的 [wydomain](https://github.com/ring04h/wydomain/blob/wydomain2/wydomain.csv) 项目）
+![](doc/images/Screenshot-subdomain-brute.png)
 
 ## 插件编写
 
